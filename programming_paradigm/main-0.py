@@ -1,34 +1,38 @@
-import sys
 from bank_account import BankAccount
 
 def main():
-    # Start with 0 balance (ALX usually expects 0 unless specified)
-    account = BankAccount()
+    account = BankAccount()  # start with 0 balance
 
-    if len(sys.argv) < 2:
-        print("Usage: python main-0.py <command>:<amount>")
-        print("Commands: deposit, withdraw, display")
-        sys.exit(1)
+    while True:
+        user_input = input("Enter command (deposit, withdraw, display, exit): ").strip().lower()
 
-    command_parts = sys.argv[1].split(':')
-    command = command_parts[0].lower()  # make case-insensitive
-    amount = float(command_parts[1]) if len(command_parts) > 1 else None
+        if user_input == "exit":
+            print("Exiting...")
+            break
 
-    if command == "deposit" and amount is not None:
-        account.deposit(amount)
-        account.display_balance()
+        if user_input.startswith("deposit"):
+            try:
+                amount = float(user_input.split()[1])
+                account.deposit(amount)
+                account.display_balance()
+            except (IndexError, ValueError):
+                print("Invalid deposit amount. Usage: deposit <amount>")
 
-    elif command == "withdraw" and amount is not None:
-        if account.withdraw(amount):
+        elif user_input.startswith("withdraw"):
+            try:
+                amount = float(user_input.split()[1])
+                if account.withdraw(amount):
+                    account.display_balance()
+                else:
+                    print("Insufficient funds.")
+            except (IndexError, ValueError):
+                print("Invalid withdraw amount. Usage: withdraw <amount>")
+
+        elif user_input == "display":
             account.display_balance()
+
         else:
-            print("Insufficient funds.")
-
-    elif command == "display":
-        account.display_balance()
-
-    else:
-        print("Invalid command or missing amount.")
+            print("Invalid command. Commands: deposit <amount>, withdraw <amount>, display, exit")
 
 if __name__ == "__main__":
     main()
